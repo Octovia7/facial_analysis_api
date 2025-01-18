@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import cv2
@@ -86,6 +87,16 @@ async def analyze_face(file: UploadFile = File(...)):
         return JSONResponse(content=combined_results)
 
     except HTTPException as e:
+        raise e
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+if __name__ == "__main__":
+    # Ensure the app uses the PORT environment variable for dynamic port binding
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))  # Default to 8000 if PORT isn't set
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
         raise e
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
